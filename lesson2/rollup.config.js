@@ -1,6 +1,6 @@
-import ts from 'rollup-plugin-typescript2';
-import { nodeResolve } from '@rollup/plugin-node-resolve';
-import serve from 'rollup-plugin-serve';
+import ts from 'rollup-plugin-typescript2'; // 解析ts的插件 将ts编译成JS是typescript插件做的
+import { nodeResolve } from '@rollup/plugin-node-resolve'; // 解析第三方模块的插件
+import serve from 'rollup-plugin-serve'; // 启动本地服务的插件
 import path from 'path';
 
 export default {
