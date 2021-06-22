@@ -1,152 +1,141 @@
-// ts中的数据类型
-
-// 一、 基础类型：
-// 所有的类型 : 后面的都是类型 = 后面的都是值
-
-// 1.数字类型
-let num: number = 10;
-
-// 2.字符串类型
-let str: string = 'zf';
-
-// 3.布尔类型
-let bool: boolean = true;
-
-// 4.元组类型：元组类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。
+// 类 ES6
 /**
- * 操作元组的注意事项：
- * 1) 可以向元组中添加内容，但是添加的内容必须是元组中已经声明过的类型。
- * 2) 不能通过索引添加内容。
+ * 类的三个属性：
+ * 1. 静态属性：只能由类自己调用
+ * 2. 实例属性：每个实例自己的属性
+ * 3. 原型属性：所有实例共享的属性
  */
-let tuple: [string, number, boolean] = ['zf', 11, true]
-let t = tuple.unshift(true)
-// tuple[0] = 'zfpx';
 
-// console.log(tuple[0]);
+// as 断言成xxx 
+// ! 非空断言
+// ? 链判断运算符 有值取值 无值返回undefined
 
+// 1、类的属性
 
-// 5.数组类型：存放一类类型的集合
-let arr1: number[] = [1, 2, 3];
-let arr2: string[] = ['a', 'b'];
-// 联合类型可以看作并集 既能使用数字 又能使用字符串
-let arr3: (number | string)[] = [1, '2'];
-let arr4: Array<number | string> = [1, 2, 3, 'a'];
-let arr5: any[] = [1, 2, {}] // 什么都能放
-
-// 6.枚举类型
-enum USER_ROLE {
-    USER, // 默认下标是从0开始
-    ADMIN,
-    MANAGER
-}
-// 默认可以正向取出 也可以反举
-// 通过下标去取是反举
-console.log(USER_ROLE[0]);
-console.log(USER_ROLE.USER);
-console.log(USER_ROLE['USER']);
-
-    // 6.1 异构枚举：异构枚举不能反举，但是可以通过数字自动向下推断
-    enum USER_ROLE2 {
-        USER = 'a',
-        ADMIN = 1,
-        MANAGER
+// 1.1 声明属性如果不赋值默认是不支持的，解决方案：1.修改配置文件，非严格模式可以. 2.使用非空断言
+class Pointer1 {
+    x!: number // 实例上的属性
+    y=0
+    constructor(x:number, y:number) { // constructor构造函数的参数和函数相同
+        this.x = x;
+        this.y = y;
     }
-    // console.log(USER_ROLE2.USER);
-    // console.log(USER_ROLE2['a']); // 报错 异构枚举不能反举
-
-    // 6.2 常量枚举：只是提供一个类型，也不能反举
-    const enum  USER_ROLE3 {
-        USER,
-        ADMIN,
-    }
-    console.log(USER_ROLE3.USER); // 打包成一个常量 数字 0 
-
-// 7.any类型：不进行类型检测的类型 相当于没有写类型
-let arr:any = [1, 'zf', {}, []]; // 能不用any 尽量不用any
-console.log(arr);
-
-// 8. null和undefined类型：null和undefined是任何类型的子类型
-let str2:number|string;
-// str2 = undefined; // 默认在严格模式下，只能将null赋值给null类型，undefined赋值给undefined类型
-// str2 = null;
-let n:null;
-n = null;
-let u:undefined;
-u = undefined;
-
-// 8.void 空类型 只能接受 null 和 undefined 一般的应用场景就是函数的返回值
-let v:void;
-// v = null; // 报错 在非严格模式下不报错
-v = undefined; // undefined默认兼容void
-
-// function a():void {
-//     return null; // 报错
-// }
-function a():void {
-    return undefined; // 报错
 }
 
-// 9. never类型：永远不，是任何类型的子类型，可以把never赋予给任何类型
+class Pointer {
+    // x!: number // 实例上的属性
+    // y=0
+    public x!: number // 实例上的属性
+    public y=0
+    constructor(x:number, y?:number) { // constructor构造函数的参数和函数相同
+        this.x = x;
+        this.y = y as number; // y 可能是undefined 会报错 只能想办法修改y类型或判断有无
+        if(y) {
+            this.y = y;
+        }
+    }
+    static a = 1
+}
+
+let pointer = new Pointer(1,2);
+pointer.x;
+pointer.y;
+// pointer.a; // 不存在
+Pointer.a;
+
+console.dir(pointer); 
+
+
+// 2、类的修饰符：public private protected readonly
 /**
- * 永远达不到的情况有三种
- * 1) 错误。
- * 2) 死循环。
- * 3) 类型判断时出现never。
+ * 1. public: 表示 父类本身、子类、外面都可以获取到这个属性
+ * 2. protected: 表示父类本身、子类能访问到这个属性
+ * 3. private 只有自己能访问到
+ * 4. readonly: 表示当前属性不能被修改 指在constructor中赋值完成后就不能再修改
  */
-// 错误
-function MyError():never{
-    throw new Error("")
+class Animal {
+    protected name!:string
+    public age!:number
+    private test!:number
+    readonly test2!:string
+    constructor(name:string, age:number) {
+        // console.log(this.name, this.age); // undefined undefined
+        
+        this.name = name;
+        this.age = age;
+    }
 }
-// let nr1 = MyError(); // nr的类型就是 never
-// str = nr1; // 这个时候 nr作为never就可以赋值给任何类型
 
-// 死循环
-function whileTrue():never{
-    while(true) {
+class Cat extends Animal {
+    address=''
+    constructor(name:string, age: number, address:string) {
+        super(name, age);
+        this.address = address;
+    }
+}
+
+
+let tom = new Cat('Tom', 10, '美国');
+tom.age;
+tom.test2;
+// tom.test2 = 'zf' // 无法分配到 "test2" ，因为它是只读属性。
+// tom.name // 属性“name”受保护，只能在类“Animal”及其子类中访问。
+// tom.test // 属性“test”为私有属性，只能在类“Animal”中访问
+
+
+// 3、类的静态属性和静态方法: 通过类来调用的就是静态的(可以被继承)
+class People {
+    static type = "人";
+    static getName() {
+        return '人类'
+    }
+    say() {
+        console.log('say');
+    }
+}
+
+class Man extends People {
+    static getName() {
+        super.getName(); // 静态方法中的super指代的是父类
+        return '男人'
+    }
+    constructor() {
+        super(); // constructor中的super也是指代父类
+    }
+    say() {
+        super.say(); //  这个super指代的是父类的原型 People.prototype
+        console.log('say man');
         
     }
 }
 
-let nr2 = whileTrue(); // nr的类型就是 never
-str = nr2; // 这个时候 nr作为never就可以赋值给任何类型
+People.type;
+People.getName();
+
+console.log(Man.getName());
+
+let p = new People();
+let m = new Man();
+m.say()
 
 
-// 类型判断
-function byType(val:string|number) {
-    if(typeof val == 'string') {
-        val
-    } else if(typeof val == 'number'){
-        val
-    } else {
-        val // never
+// 4、属性访问器
+class People1 {
+    static type = "人";
+    static getName() {
+        return '人类'
+    }
+    say() {
+        console.log('say');
+    }
+    // 属性访问器（原型属性）
+    private _eat :string=''
+    get eat() {
+        return this._eat
+    }
+    set eat(newVal) {
+        this._eat = newVal
     }
 }
 
-// 10.symbol类型： symbol表示独一无二
-let s1 = Symbol('123');
-let s2 = Symbol('123');
-
-// 11.bigint类型：
-
-let num1 = Number.MAX_SAFE_INTEGER  + 1;
-let num2 = Number.MAX_SAFE_INTEGER + 2;
-console.log(num1 == num2 );
-
-let num3 = BigInt(Number.MAX_SAFE_INTEGER)  + BigInt(1);
-let num4 =BigInt(Number.MAX_SAFE_INTEGER)  + BigInt(2);
-console.log(num3 == num4);
-
-// 12.对象类型 非原始数据类型 object
-
-const create = (obj:object) => {
-
-}
-// create(1); // 报错
-create({});
-create([]);
-create(function() {})
-
-let name = '1'; // 默认去安居下本来就有一个name
-console.log(name);
-
-export {}; // 防止模块间的干扰
+export {}
