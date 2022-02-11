@@ -14,7 +14,7 @@ function sum1(a:string, b:string):string {
 
 // 2、函数表达式：如果你使用的是表达式，你给变量定义了类型，你可以把一个兼容的函数赋予他，如果赋予了不兼容的函数，会报错
 
-// 2.1 这种情况下ts会自动给sum变量推导类型：sum: (a: string, b: string) => string
+// 2.1 这种情况下ts会自动给sum变量推导类型：sum2: (a: string, b: string) => string
 let sum2 = (a:string, b:string):string => {
     return a + b;
 }
